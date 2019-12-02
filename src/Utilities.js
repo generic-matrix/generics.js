@@ -157,7 +157,7 @@ class Utilities{
 				if(folds==0||folds.length>=input.length){
 					reject("Fold value is invalid.");
 				}else{
-					//shuffleArray(input,output);
+					shuffleArray(input,output);
 					var x_data_set=arr_split(input,folds);
 					var y_data_set=arr_split(output,folds);
 					for(let j=0;j<x_data_set.length;j++){
