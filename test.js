@@ -1,2 +1,2 @@
-var gen = require("/Users/kaustubhb/Desktop/generics-js/index.js");
+var gen = require("generics.js");
 console.log(gen);
