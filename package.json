@@ -1,0 +1,28 @@
+{
+  "name": "generics-js",
+  "version": "0.1.0",
+  "description": "A minimal library for Deep learning for the web",
+  "main": "./index.js",
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "deep learning",
+    "neural networks",
+    "AI",
+    "data science",
+    "ANN",
+    "CNN"
+  ],
+  "author": "The generics-js Team <appdevcorp999@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "csv-parser": "^2.3.0",
+    "image-js": "^0.21.6",
+    "synket": "^1.0.3"
+  },
+  "homepage": "https://trygistify.com/generics-js"
+}
