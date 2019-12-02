@@ -1,10 +1,10 @@
 {
-  "name": "generics-js",
+  "name": "generics.js",
   "version": "0.1.0",
   "description": "A minimal library for Deep learning for the web",
-  "main": "./index.js",
+  "main": "index.js",
   "scripts": {
-    "test": "node test.mjs"
+    "test": "node test.js"
   },
   "files": [
     "src"
