@@ -4,7 +4,7 @@ const  Neuron =require("./src/Neuron.js");
 const  Utilities =require("./src/Utilities.js");
 const Activation =require("./src/Activation.js");
 const  Pre_Processing =require("./src/Pre_processing.js");
-const CNN =require("./src/CNN.js");
+const Convolution =require("./src/Convolution.js");
 const  ANN =require("./src/ANN.js");
 
 module.exports ={
@@ -13,6 +13,6 @@ module.exports ={
   Utilities,
   Activation,
   Pre_Processing,
-  CNN,
+  Convolution,
   ANN
 };
