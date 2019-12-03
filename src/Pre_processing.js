@@ -164,7 +164,7 @@ function find_filesX(dir,threashold) {
 }
 
 function get_sampling(x_axis,image_dir,i,threashold,dir,img_length,img_height,kernel_size,conv_options,conv_kernel) {
-	var conv = new CNN();
+	var conv = new Convolution();
 	return new Promise(function(resolve, reject){
 		conv.image_flatten(image_dir,img_length,img_height,kernel_size,conv_options,conv_kernel).then(function (array) {
 			array.forEach(function (x) {
