@@ -212,22 +212,64 @@ function encoding(y_axis) {
 	json["key"]=arr;
 	return json;
 }
+/*
+* A class for all pre processing activities
+*/
 class Preprocessing{
-
+     /**
+    * To pre process the image.
+    * @param {array}  x_axis : The x_axis will be filled as the image is getting processed .
+    * @param {array}  y_axis : The y_axis  will be filled as the image is getting processed .
+    * @param {string}  dir : The  directory where the model must be saved.
+    * @param {number}  img_length : The length of the image.
+    * @param {number}  img_height  : The height of the image.
+    * @param {number}  kernel_size : The size of the maxpooling kernel.
+    * @param {string}  conv_options : Refer : https://image-js.github.io/image-js/#imageconvolution
+    * @param {array}  conv_kernel : The kernel which must be used to process the image.
+    * @param {function}  find_files : A callback function which is needed to find images in a directory defined by a user.
+    * @param {function}  callback : A callback function which takes a argument number_of_images_processed.
+    */
 	image_pre_process(x_axis,y_axis,dir,img_length=500,img_height=500,kernel_size=2,conv_options="direct",conv_kernel=null,find_files=null,callback=null){
 		if(find_files==null){
 			throw new Error("The function to find files (find_files) is not passed.Please do add a function with your constraint needed.");
 		}
 		return image_pre_process(x_axis,y_axis,dir,img_length,img_height,kernel_size,conv_options,conv_kernel,find_files,callback);
 	}
-	async label_encoding(y_axis){
+    /**
+    * A class for label encoding .
+    * @param {array}  y_axis : The y_axis is the output  for which we need the predictions.
+    * @returns {array}  result : The result can be used to classify the data.
+    */
+    async label_encoding(y_axis){
 		return encoding(y_axis);
 	}
-
-	sub_sampling(x_axis, keys, threashold, dir, img_length, img_height, kernel_length, kernel_height, minSurface, conv_options, color, conv_kernel){
-		return sub_sampling(x_axis, keys, threashold, dir, img_length, img_height, kernel_length, kernel_height, minSurface, conv_options, color, conv_kernel);
+    /**
+    * To get the samples of images for qualy check and data visualization or other purposes.
+    * @param {JSON}  x_axis : A empty JSON which will be filled as the image is getting processed.
+    * @param {number}  threashold : The threashold is the sample images taken from each class.
+    * @param {string}  dir : The  directory where the model must be saved.
+    * @param {number}  img_length : The length of the image.
+    * @param {number}  img_height  : The height of the image.
+    * @param {number}  kernel_size : The size of the maxpooling kernel.
+    * @param {string}  conv_options : Refer : https://image-js.github.io/image-js/#imageconvolution
+    * @param {array}  conv_kernel : The kernel which must be used to process the image.
+    */
+	sub_sampling(x_axis,threashold,dir, img_length, img_height, kernel_size,conv_options,conv_kernel){
+		return sub_sampling(x_axis,threashold,dir, img_length, img_height, kernel_size,conv_options,conv_kernel);
 	}
 
+    /**
+    * To parse the csv and convet it to JSON .
+    * @param {string}  dir : A empty JSON which will be filled as the image is getting processed.
+    * @param {number}  fill_type : 
+    *       If fill_type==0 : Reject the row .
+    *       If fill_type==1 :  Fill with the user give number which is given in fill_json (the last param)
+    *       If fill_type==2 :  If fill with random values.
+    * @param {array}  x_axis : The  directory where the model must be saved.
+    * @param {array}  y_axis : The length of the image.
+    * @param {number}  maximum_val  : The height of the image.
+    * @param {JSON}  fill_json :  The Array you to fill with (will be applicable if fill_type==1 will be selected.)
+    */
 	async parse_csv(dir,fill_type,x_axis,y_axis,maximum_val,fill_json=null){
 		return new Promise(function(resolve, reject) {
 			json={};
