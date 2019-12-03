@@ -269,6 +269,11 @@ class Preprocessing{
     * @param {array}  y_axis : The length of the image.
     * @param {number}  maximum_val  : The height of the image.
     * @param {JSON}  fill_json :  The Array you to fill with (will be applicable if fill_type==1 will be selected.)
+            Example 
+                var fill_json={
+                "x_axis":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                "y_axis":[0]
+                };
     */
 	async parse_csv(dir,fill_type,x_axis,y_axis,maximum_val,fill_json=null){
 		return new Promise(function(resolve, reject) {
