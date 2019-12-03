@@ -21,7 +21,7 @@ class Connection{
 }
 
 /**
-* Creates a Nueron 
+* Creates a Neuron
 * @param {array} layer  - The amount of neurons for each layer.
 * @param {array} activation  - The activation function for each layer.
 * @param {json} param  - Accepts the JSON data type.
