@@ -7,6 +7,7 @@ function check_obj(obj){
 		if(obj.custom_adapter!=null){ return true;}else{return false;}
 	}
 }
+
 class Connection{
 
 	constructor(connectedNeuron,param,optimize)
@@ -19,16 +20,24 @@ class Connection{
 	}
 }
 
+/**
+* Creates a Nueron 
+* @param {array} layer  - The amount of neurons for each layer.
+* @param {array} activation  - The activation function for each layer.
+* @param {json} param  - Accepts the JSON data type.
+*@returns {Network} Neuron Object
+*/
 class Neuron{
-	
-	constructor(layer,activation,param,optimize){
+
+	constructor(layer,activation,param){
+        //optimize in next update..
 		this.dendrons = [];
 		this.eta = 0.001;
 		this.alpha = 0.01;
 		this.error = 0.0;
 		this.gradient = 0.0;
 		this.output = 0.0;
-		this.optimize=optimize;
+		this.optimize=null;
 		this.activation=activation;
 		this.param=param;
 		if (layer != null) {
@@ -38,7 +47,10 @@ class Neuron{
 			},this);
 		}
 	}
-	
+    /**
+    * Add error in a specific neuron
+    * @param {number} err 
+    */
 	addError(err)
 	{
 		if(check_obj(this)==true){
@@ -48,36 +60,53 @@ class Neuron{
 		}
 	}
 
-	
+    /**
+    * Set error in a specific neuron
+    * @param {number} err 
+    */
 	setError(err)
 	{
 		this.error = err;
 	}
 
+    /**
+    * Add error in a specific neuron
+    * @param {number} err 
+    */
+    
 	setOutput(output)
 	{
 		this.output = output;
 	}
 
+    /**
+    * Get the array expected by the neuron.
+    * @returns {array} output  
+    */
+    
 	getOutput()
 	{
 		return this.output;
 	}
-	
+
+    /**
+    * Perform Feed forward operation in Neural Network.
+    */
+    
 	feedForward()
 	{
 		var sumoutput = 0;
 		if (this.dendrons.length == 0) {
 			return;
 		}
-		
+
 		this.dendrons.forEach(function(dendron) {
 			if(check_obj(this)==true){
-			var val=this.custom_adapter.multiply(dendron.connectedNeuron.getOutput(),dendron.weight);
-			sumoutput =  Adapter.add(sumoutput,val);
+				var val=this.custom_adapter.multiply(dendron.connectedNeuron.getOutput(),dendron.weight);
+				sumoutput =  Adapter.add(sumoutput,val);
 			}else{
-			var val=dendron.connectedNeuron.getOutput()*dendron.weight;
-			sumoutput = sumoutput+val;	
+				var val=dendron.connectedNeuron.getOutput()*dendron.weight;
+				sumoutput = sumoutput+val;
 			}
 		});
 		var activation=new Activations(this.optimize);
@@ -89,42 +118,54 @@ class Neuron{
 			this.output = activation.leaky_relu(sumoutput);
 		}
 	}
-	
+
+    /**
+    * Assign weights to the neuron
+    * @param {array}  
+    */
 	assign_weights(arr){
 		var ctr=0;
 		this.dendrons.forEach(function(dendron) { dendron.weight=arr[ctr]; ctr++; });
 	}
-	
+
+    /**
+    * Get weights to the neuron
+    * @returns {array}  
+    */
 	get_weights(){
 		var weight=[];
 		var sumoutput = 0;
 		this.dendrons.forEach(function(dendron) { weight.push(dendron.weight); });
 		return weight;
 	}
-	
+
+    /**
+    * To perform backpropogation algorithm.
+    */
+    
 	backPropogate()
 	{
 		var activation=new Activations(this.optimize);
 		if(this.activation=="sigmoid"){
-		if(check_obj(this)==true){
-			this.gradient = this.custom_adapter.multiply(this.error,activation.dsigmoid(this.output));
-		}else{
-			this.gradient = this.error*activation.dsigmoid(this.output);
-		}
+			if(check_obj(this)==true){
+				this.gradient = this.custom_adapter.multiply(this.error,activation.dsigmoid(this.output));
+			}else{
+				this.gradient = this.error*activation.dsigmoid(this.output);
+			}
 		}else if(this.activation=="relu"){
-		if(check_obj(this)==true){
-			this.gradient = this.custom_adapter.multiply(this.error,activation.drelu(this.output)); 
+			if(check_obj(this)==true){
+				this.gradient = this.custom_adapter.multiply(this.error,activation.drelu(this.output));
+			}else{
+				this.gradient = this.error*activation.drelu(this.output);
+			}
 		}else{
-			this.gradient = this.error*activation.drelu(this.output); 
-		}  
-		}else{
-		if(check_obj(this)==true){
-			this.gradient = this.custom_adapter.multiply(this.error,activation.d_leaky_relu(this.output)); 
-		}else{
-			this.gradient = this.error*activation.d_leaky_relu(this.output); 
-		}   
+			if(check_obj(this)==true){
+				this.gradient = this.custom_adapter.multiply(this.error,activation.d_leaky_relu(this.output));
+			}else{
+				this.gradient = this.error*activation.d_leaky_relu(this.output);
+			}
 		}
-		this.dendrons.forEach(function(dendron) { 
+		this.dendrons.forEach(function(dendron) {
 			if(check_obj(this)==true){
 				dendron.dWeight = (this.custom_adapter.multiply(dendron.connectedNeuron.output,this.gradient));
 				dendron.dWeight = this.custom_adapter.multiply(this.eta,dendron.dWeight);
@@ -151,6 +192,6 @@ class Neuron{
 		this.error = 0;
 	}
 
-	
+
 }
 module.exports = Neuron
