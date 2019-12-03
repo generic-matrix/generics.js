@@ -212,7 +212,7 @@ function encoding(y_axis) {
 	json["key"]=arr;
 	return json;
 }
-/*
+/**
 * A class for all pre processing activities
 */
 class Preprocessing{
