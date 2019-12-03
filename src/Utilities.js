@@ -186,7 +186,7 @@ class Utilities{
     * @param {number}  count  : How many times a neural network must be trained .
     * @param {string}  dir : The  directory where the model must be saved.
     * @param {number}  threashold : The threashold value ,if the predicted value is less  than it then success else it's counted as failue.
-    * @returns {number}  percent: The percentage bywhich a input data must be divided in a batch size.
+    * @param {number}  percent: The percentage bywhich a input data must be divided in a batch size.
     */
     
 	perform_k_fold(net,input,output,folds,count,dir,threashold,percent){
