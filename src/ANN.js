@@ -1,12 +1,13 @@
 const Neuron=require("./Neuron.js");
 
 class Network{
-	constructor(topology,activations,param,custom_adapter=null){
+	//this.custom_adapter will be in the next update.
+ 	constructor(topology,activations,param){
 		this.layers = [];
 		this.topology=topology;
 		this.activations=activations;
 		this.param=param;
-		this.custom_adapter=custom_adapter;
+		this.custom_adapter=null;
 		topology.forEach(function(numNeuron) {
 			var layer=[];
 			for(var i=0;i<numNeuron;i++){
@@ -19,9 +20,9 @@ class Network{
 			//layer.push(new Neuron(null,null));
 			layer[layer.length - 1].setOutput(1);
 			this.layers.push(layer);
-			},this);
+		},this);
 	}
-	
+
 	setInput(inputs)
 	{
 		for (var i = 0;i< inputs.length;i++) {
@@ -33,7 +34,7 @@ class Network{
 	{
 		this.output = output;
 	}
-	
+
 	feedForward()
 	{
 		var layers = this.layers.slice(1);
@@ -43,16 +44,16 @@ class Network{
 			});
 		});
 	}
-	
+
 	//backpropogate... start from here...
 	backPropogate(target)
 	{
 		for (var i = 0; i < target.length; i++) {
 			let res=-1;
 			if(this.layers==true){
-			res = Adapter.subtract([target[i]],[this.layers[this.layers.length - 1][i].getOutput()]);
+				res = Adapter.subtract([target[i]],[this.layers[this.layers.length - 1][i].getOutput()]);
 			}else{
-			res = target[i]-this.layers[this.layers.length - 1][i].getOutput();
+				res = target[i]-this.layers[this.layers.length - 1][i].getOutput();
 			}
 			this.layers[this.layers.length - 1][i].setError(res);
 		}
@@ -63,7 +64,7 @@ class Network{
 		});
 		this.layers.reverse()
 	}
-	
+
 	getError(target)
 	{
 		var err = 0;
@@ -81,8 +82,8 @@ class Network{
 		err = Math.sqrt(err);
 		return err;
 	}
-	
-	
+
+
 	assign_weights(json){
 		var i=0;
 		this.layers.forEach(function(layer){
@@ -92,10 +93,10 @@ class Network{
 				j++;
 			});
 			i++;
-		});		
+		});
 	}
-	
-	
+
+
 	getResults()
 	{
 		var output = [];
@@ -108,7 +109,7 @@ class Network{
 		output.pop();
 		return output;
 	}
-	
+
 	getTheResults()
 	{
 		var output = [];
