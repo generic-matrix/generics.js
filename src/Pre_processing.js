@@ -119,7 +119,7 @@ function hash_row(row,x_axis,y_axis,fill_type,fill_with){
 
 function image_pre_process(x_axis,y_axis,dir,img_length=500,img_height=500,kernel_size=2,conv_options="direct",conv_kernel=null,find_files,callback){
 	var j_arr=[];
-	var conv=new CNN();
+	var conv=new Convolution();
 	find_files(dir).then(function(files){
 		files.forEach(function(file){
 			find_files(dir+file).then(function(images){
