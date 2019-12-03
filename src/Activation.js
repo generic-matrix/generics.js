@@ -8,10 +8,19 @@ function check_obj(obj){
 	}
 }
 
+/**
+* A class to define the activation functions.
+*/
 class Activations{
-	constructor(optimize){
-		this.optimize=optimize;
+	constructor(){
+        //optimize in next update..
+		this.optimize=null;
 	}
+    /**
+    * Performs sigmoid 
+    * @param {number}  value
+    * @returns {number}  Result
+    */
 	sigmoid(x)
 		{
 			if(check_obj(this)){
@@ -22,6 +31,12 @@ class Activations{
 			return 1 / (1 + Math.exp(-x * 1.0));
 			}
 		}
+    
+    /**
+    * Performs derivaive of a sigmoid 
+    * @param {number}  value
+    * @returns {number}  Result
+    */
 
 		dsigmoid(x)
 		{
@@ -32,17 +47,34 @@ class Activations{
 			return x*(1.00-x);
 			}
 		}
+    
+     /**
+    * Performs Relu activation function
+    * @param {number}  value
+    * @returns {number}  Result
+    */
 		
 		relu(x)
 		{
 			return Math.max(0,x);
 		}
+    
+    /**
+    * Performs derivative of Relu activation function
+    * @param {number}  value
+    * @returns {number}  Result
+    */
 
 		drelu(x)
 		{
 			if(x>0){return x;}else{return (0.1*x);}
 		}
 		
+        /**
+    * Performs Leaky Relu activation function
+    * @param {number}  value
+    * @returns {number}  Result
+    */
 		leaky_relu(x)
 		{
 			if(x<0){
@@ -58,6 +90,11 @@ class Activations{
 			}
 		}
 
+    /**
+    * Performs derivative of Leaky Relu activation function
+    * @param {number}  value
+    * @returns {number}  Result
+    */
 		d_leaky_relu(x)
 		{
 			if(x<0){
