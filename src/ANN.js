@@ -1,5 +1,12 @@
 const Neuron=require("./Neuron.js");
 
+/**
+* Creates a Neural Network based on the paramas
+* @param {array} topology  - The amount of neurons for each layer.
+* @param {array} activations  - The activation function for each layer.
+* @param {array} param  - Accepts the JSON data type.
+*@returns {Network} Network Object
+*/
 class Network{
 	//this.custom_adapter will be in the next update.
  	constructor(topology,activations,param){
@@ -22,7 +29,6 @@ class Network{
 			this.layers.push(layer);
 		},this);
 	}
-
 	setInput(inputs)
 	{
 		for (var i = 0;i< inputs.length;i++) {
@@ -35,6 +41,9 @@ class Network{
 		this.output = output;
 	}
 
+    /*
+    Feeds forward in the neural network.
+    */
 	feedForward()
 	{
 		var layers = this.layers.slice(1);
@@ -45,7 +54,10 @@ class Network{
 		});
 	}
 
-	//backpropogate... start from here...
+    /**
+    * Performs backpropogation algorithm in the neural network
+    * @param {array} target  - Array
+    */
 	backPropogate(target)
 	{
 		for (var i = 0; i < target.length; i++) {
@@ -65,6 +77,12 @@ class Network{
 		this.layers.reverse()
 	}
 
+    /**
+    * Gets the error in the neural network model.
+    * @param {array} target  - Array
+      @returns {number} The error value
+    */
+    
 	getError(target)
 	{
 		var err = 0;
@@ -82,8 +100,10 @@ class Network{
 		err = Math.sqrt(err);
 		return err;
 	}
-
-
+     /**
+    * Assign weight based on the given JSON ,used to retain the model.
+    * @param {json} json  
+    */
 	assign_weights(json){
 		var i=0;
 		this.layers.forEach(function(layer){
@@ -97,20 +117,11 @@ class Network{
 	}
 
 
-	getResults()
-	{
-		var output = [];
-		this.layers[this.layers.length - 1].forEach(function(layer){
-			for(var i=0;i<layer.length;i++){
-				output.push(layer[i].getOutput());
-			}
-		});
-
-		output.pop();
-		return output;
-	}
-
-	getTheResults()
+ /**
+* Get the results from the neural network based on the output dimentions.
+* @returns {array} output based on the model output dimentions.
+*/
+getTheResults()
 	{
 		var output = [];
 		this.layers[this.layers.length - 1].forEach(function(neuron){
