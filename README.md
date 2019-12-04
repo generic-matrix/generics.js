@@ -77,5 +77,9 @@ pre.parse_csv("/content/cereal.csv", fill_type, ["mfr", "type", "calories", "pro
 });
 ```
 
-##License :
+## License :
+
+https://github.com/generic-matrix/generics.js/blob/master/LICENSE
+
+
 
