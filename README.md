@@ -1,6 +1,8 @@
 # A minimal deep learning library for the web
 generics.js (0.1.0)
 
+![alt text](https://www.trygistify.com/generics.js/assets/icons/logo.png)
+
 The library allows to leverage to create and deploy real time deep learning solution currently including ANN and CNN with fully featured reinforcement learning and k-fold cross validation tests.
 
 ## API Docs :
