@@ -19,12 +19,11 @@
     "k fold cross validation",
     "reinforcement learning"
   ],
-  "author": "The generics-js Team <appdevcorp999@gmail.com>",
+  "author": "The generics.js Team <appdevcorp999@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "csv-parser": "^2.3.0",
-    "image-js": "^0.21.6",
-    "synket": "^1.0.3"
+    "image-js": "^0.21.6"
   },
   "homepage": "https://trygistify.com/generics-js"
 }
