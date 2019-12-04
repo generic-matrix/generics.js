@@ -56,7 +56,7 @@ var net=new gen.Network(topology,activations,param,null);
 util.perform_k_fold(net, x_axis, y_axis, batch_size, training_count, dir, testing_threashold, split_percent);
 ```
   
-2) ### Saving and retriving of model  :  
+2) ### Easy retriving of model  :  
 
 ```
 var net = null;
