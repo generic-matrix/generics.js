@@ -42,7 +42,7 @@ var net=new gen.Network(topology,activations,param,null);
 util.perform_k_fold(net, x_axis, y_axis, batch_size, training_count, dir, testing_threashold, split_percent);
 ```
   
-2) ### Saving and retrieving of model  :  
+2) ### Saving and retriving of model  :  
 
 ```
 var net = null;
@@ -54,4 +54,12 @@ util.restore_model(dir2).then(function(net2){
 
 ```
 3) ### Inbuild CSV parsing :
-
+Refer: https://www.trygistify.com/generics#preprocessingparse_csv
+```
+var pre=new gen.Pre_Processing();
+var fill_type = 0;
+pre.parse_csv("/content/cereal.csv", fill_type, ["mfr", "type", "calories", "protein", "fat", "sodium", "fiber", "carbo", "sugars", "potass", "vitamins", "shelf", "weight", "cups"], ["rating"])
+.then(function (json) {
+  console.log(json);
+});
+```
