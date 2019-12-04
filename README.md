@@ -85,5 +85,5 @@ pre.parse_csv("/content/cereal.csv", fill_type, ["mfr", "type", "calories", "pro
 
 https://github.com/generic-matrix/generics.js/blob/master/LICENSE
 
-Logo icon for generics.js made by #[Good Ware](https://www.flaticon.com/authors/good-ware) from #www.flaticon.com
+Logo icon for generics.js made by [Good Ware](https://www.flaticon.com/authors/good-ware) from #www.flaticon.com
 
