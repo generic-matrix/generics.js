@@ -42,7 +42,7 @@ class Neuron{
 		this.param=param;
 		if (layer != null) {
 			layer.forEach(function(neuron) {
-				var con=new Connection(neuron,optimize);
+				var con=new Connection(neuron,this.optimize);
 				this.dendrons.push(con);
 			},this);
 		}
