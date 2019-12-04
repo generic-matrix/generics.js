@@ -11,8 +11,21 @@ Food rating prediction:
 
 Dogs and cats prediction: 
 
-## Installation:
-`npm install generics.js —save`
+## Pull it using npm:
+`npm install generics.js --save`
+
+## Manual installation:
+```
+git clone https://github.com/generic-matrix/generics.js.git
+unzip generics.js.zip
+cd generics.js && npm install -g --save
+
+```
+
+## Use it as:
+```
+let gen = require("generics.js");
+```
 
 ## Features  :
 1) ### K fold cross validation tests  
