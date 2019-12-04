@@ -9,9 +9,9 @@ The library allows to leverage to create and deploy real time deep learning solu
 www.trygistify.com/generics
 
 ## Real time examples:
-Food rating prediction: 
+Food rating prediction: [Google Colab](https://colab.research.google.com/drive/1Kn6UHHkU_uxU10QY4efMSnIetWrc_AuS)
 
-Dogs and cats prediction: 
+Dogs and cats prediction: [Google Colab](https://colab.research.google.com/drive/1lQ-14TdZvkDSb8d9P_kbciqpxieD-9Sw)
 
 ## Pull it using npm:
 `npm install generics.js --save`
