@@ -107,7 +107,7 @@ class Utilities{
 
     /**
     * To get restore model from the JSON file.
-    * @param {string}  directory: To the JSON file.
+    * @param {string}  dir: To the JSON file.
     */
     
 	restore_model(dir){
@@ -134,7 +134,7 @@ class Utilities{
 				});
 				var weights=json["weights"];
 				var param=json["param"];
-				var net=new Network(topology,activations,param,use_gpu);
+				var net=new Network(topology,activations,param);
 				net.assign_weights(weights);
 				resolve(net);
 			});
