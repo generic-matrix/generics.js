@@ -28,9 +28,6 @@ cd generics.js && npm install -g --save
 ```
 let gen = require("generics.js");
 ```
-```
-
-```
 ## Features  :
 1) ### K fold cross validation tests  
 (used to evaluate machine learning models on a limited data sample) :  
