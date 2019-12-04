@@ -11,7 +11,7 @@ Food rating prediction:
 Dogs and cats prediction: 
 
 ## Installation:
-‘ npm install generics.js —save ’
+‘npm install generics.js —save’
 
 ## Features  :
 1) K fold cross validation tests  (used to evaluate machine learning models on a limited data sample) :  
