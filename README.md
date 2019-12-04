@@ -15,7 +15,8 @@ Dogs and cats prediction:
 `npm install generics.js —save`
 
 ## Features  :
-1) K fold cross validation tests  (used to evaluate machine learning models on a limited data sample) :  
+1) # K fold cross validation tests  
+(used to evaluate machine learning models on a limited data sample) :  
 ```
 var dir = "/content/my_model.json";
 var summary_url = "/content/summary.json";
@@ -40,7 +41,7 @@ var testing_threashold = 0.45;var split_percent = 20;
   util.perform_k_fold(net, x_axis, y_axis, batch_size, training_count, dir, testing_threashold, split_percent);
   ```
   
-2) Saving and retrieving of model  :  
+2) # Saving and retrieving of model  :  
 
 ```
 var net = null;
@@ -51,3 +52,5 @@ util.restore_model(dir2).then(function(net2){
 });
 
 ```
+3) # Inbuild CSV parsing :
+
