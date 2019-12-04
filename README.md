@@ -8,6 +8,7 @@ www.trygistify.com/generics
 
 ## Real time examples:
 Food rating prediction: 
+
 Dogs and cats prediction: 
 
 ## Installation:
@@ -41,5 +42,12 @@ var testing_threashold = 0.45;var split_percent = 20;
   
 2) Saving and retrieving of model  :  
 
-## What’s next ?
-*We will need to implement shared memory* between nan and *.cu * so the GPUs access will become faster 
+```
+var net = null;
+var util = new gen.Utilities();
+var dir2 = "/content/my_model.json";
+util.restore_model(dir2).then(function(net2){
+     net=net2;
+});
+
+```
