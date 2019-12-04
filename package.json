@@ -17,7 +17,18 @@
     "ANN",
     "CNN",
     "k fold cross validation",
-    "reinforcement learning"
+    "reinforcement learning",
+    "generics.js",
+    "artificial-intelligence",
+    "feed forward",
+    "neural network",
+    "classifier",
+    "neural network",
+    "neural-networks",
+    "machine-learning",
+    "synapse",
+    "time series  prediction",
+    "deep learning examples"
   ],
   "author": "The generics.js Team <appdevcorp999@gmail.com>",
   "license": "MIT",
@@ -27,3 +38,4 @@
   },
   "homepage": "https://www.trygistify.com/generics"
 }
+
