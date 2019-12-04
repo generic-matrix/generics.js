@@ -1,5 +1,5 @@
 # A minimal deep learning library for the web
-generics.js (0.1.0)
+generics.js
 
 ![alt text](https://www.trygistify.com/generics.js/assets/icons/logo.png)
 
