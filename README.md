@@ -15,13 +15,12 @@ Dogs and cats prediction:
 
 ## Features  :
 1) K fold cross validation tests  (used to evaluate machine learning models on a limited data sample) :  
-`var dir = “/content/my_model.json”;`
-`var summary_url = “/content/summary.json”;`
-`var util = new gen.Utilities();`
-`var training_count = 10;`
-`var batch_size = 10;`
-`var testing_threashold = 0.45;
-var split_percent = 20;
+`var dir = “/content/my_model.json”;
+var summary_url = “/content/summary.json”;
+var util = new gen.Utilities();
+var training_count = 10;
+var batch_size = 10;
+var testing_threashold = 0.45;var split_percent = 20;
   var util = new gen.Utilities();
   var topology=[];
   topology.push(x_axis[0].length);
