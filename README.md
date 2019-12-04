@@ -21,7 +21,6 @@ Dogs and cats prediction:
 git clone https://github.com/generic-matrix/generics.js.git
 unzip generics.js.zip
 cd generics.js && npm install -g --save
-
 ```
 
 ## Use it as:
