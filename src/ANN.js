@@ -7,38 +7,61 @@ const Neuron=require("./Neuron.js");
 * @param {array} param  - Accepts the JSON data type.
 *@returns {Network} Network Object
 */
+
+
 class Network{
 	//this.custom_adapter will be in the next update.
- 	constructor(topology,activations,param){
+ 	constructor(topology,activations,param,Accelerator=null,settings=null){
 		this.layers = [];
 		this.topology=topology;
 		this.activations=activations;
 		this.param=param;
-		this.custom_adapter=null;
+		if(Accelerator!=null) {
+			this.acc = new Accelerator.accelerator(settings);
+			this.acc_util = new Accelerator.util(settings);
+			if(this.param["learning_rate"]!=undefined) {
+				this.param["learning_rate"] = this.acc.define_array([this.param["learning_rate"]]);
+			}
+		}else{
+			console.error("-------------------------------------------------------------------------------------------------");
+			console.error("| You can install accelerator.js by [ npm install accelerator.js -g --save ] to leverage the GPU|");
+			console.error("-------------------------------------------------------------------------------------------------");
+			this.acc = null;
+			this.acc_util = null;
+		}
 		topology.forEach(function(numNeuron) {
 			var layer=[];
 			for(var i=0;i<numNeuron;i++){
 				if (this.layers.length == 0) {
-					layer.push(new Neuron(null,activations[i],param,this.custom_adapter));
+					layer.push(new Neuron(null,activations[i],param,this.acc,this.acc_util));
 				} else {
-					layer.push(new Neuron(this.layers[this.layers.length - 1],activations[i],param,this.custom_adapter));
+					layer.push(new Neuron(this.layers[this.layers.length - 1],activations[i],param,this.acc,this.acc_util));
 				}
 			}
-			//layer.push(new Neuron(null,null));
-			layer[layer.length - 1].setOutput(1);
+			if(this.acc!=null){
+				let one_arr=this.acc.one_arr;
+				layer[layer.length - 1].setOutput(one_arr);
+			}else {
+				layer[layer.length - 1].setOutput(1);
+			}
 			this.layers.push(layer);
 		},this);
 	}
 	setInput(inputs)
 	{
 		for (var i = 0;i< inputs.length;i++) {
-			this.layers[0][i].setOutput(inputs[i]);
+			if(this.acc!=null) {
+				this.layers[0][i].setOutput(this.acc.define_array([inputs[i]]));
+			}else{
+				this.layers[0][i].setOutput(inputs[i]);
+			}
 		}
 	}
 
 	setOutput(output)
 	{
 		this.output = output;
+
 	}
 
     /*
@@ -61,13 +84,14 @@ class Network{
 	backPropogate(target)
 	{
 		for (var i = 0; i < target.length; i++) {
-			let res=-1;
-			if(this.layers==true){
-				res = Adapter.subtract([target[i]],[this.layers[this.layers.length - 1][i].getOutput()]);
+			if(this.acc!=null){
+				var temp=this.layers[this.layers.length - 1][i].getOutput();
+				var res = this.acc_util.sub(this.acc.define_array([target[i]]),temp);
+				this.layers[this.layers.length - 1][i].setError(res);
 			}else{
-				res = target[i]-this.layers[this.layers.length - 1][i].getOutput();
+				var res = target[i]-this.layers[this.layers.length - 1][i].getOutput();
+				this.layers[this.layers.length - 1][i].setError(res);
 			}
-			this.layers[this.layers.length - 1][i].setError(res);
 		}
 		this.layers.reverse().forEach(function(layer) {
 			layer.forEach(function(neuron){
@@ -87,9 +111,10 @@ class Network{
 	{
 		var err = 0;
 		for (var i = 0; i < target.length; i++) {
-			if(this.custom_adapter!=null){
-				var e=this.custom_adapter.subtract(target[i],this.layers[this.layers.length - 1][i].getOutput());
-				err = err + this.custom_adapter.pow(e,2);
+			if(this.acc!=null){
+				var e=this.acc_util.sub(this.acc.define_array([target[i]]),this.layers[this.layers.length - 1][i].getOutput());
+				var pow=this.acc_util.pow(e,this.acc.two_arr);
+				err=this.acc.get_array(pow)[0]+err;
 			}
 			else{
 				let e = target[i]-this.layers[this.layers.length - 1][i].getOutput();
@@ -124,11 +149,19 @@ class Network{
 getTheResults()
 	{
 		var output = [];
-		this.layers[this.layers.length - 1].forEach(function(neuron){
-			var o = neuron.getOutput();
-			output.push(o);
-		});
-		return output;
+		if(this.acc!=null){
+			this.layers[this.layers.length - 1].forEach(function (neuron) {
+				var o = neuron.acc.get_array(neuron.getOutput());
+				output.push(o);
+			});
+			return output;
+		}else {
+			this.layers[this.layers.length - 1].forEach(function (neuron) {
+				var o = neuron.getOutput();
+				output.push(o);
+			});
+			return output;
+		}
 	}
 }
 module.exports = Network
