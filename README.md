@@ -37,13 +37,13 @@ var activations = [util.LEAKY_RELU(),util.SIGMOID()];
 var param={
     "learning_rate":0.1
 };
-let net=new gen.Network(topology,activations,param,null,null);
+var net=new gen.Network(topology,activations,param,null,null);
 util.train(net,x_axis,y_axis,200);
 util.save_model(net,"test.json");
 var result=util.predict(net,[4,5,6,7]);
 var result2=util.predict(net,[9,8,7,6]);
-console.log(result);
-console.log(result2);
+console.log("Expect 1 Given : "+result);
+console.log("Expect 0 Given : "+result2);
 ```
 
 ## Features  :
