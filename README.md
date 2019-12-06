@@ -38,7 +38,7 @@ var param={
     "learning_rate":0.1
 };
 var net=new gen.Network(topology,activations,param,null,null);
-util.train(net,x_axis,y_axis,200);
+util.train(net,x_axis,y_axis,70);
 util.save_model(net,"test.json");
 var result=util.predict(net,[4,5,6,7]);
 var result2=util.predict(net,[9,8,7,6]);
