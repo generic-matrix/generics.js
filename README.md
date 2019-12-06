@@ -27,6 +27,25 @@ cd generics.js && npm install -g --save
 ```
 let gen = require("generics.js");
 ```
+```
+var x_axis=[[1,2,3,4],[6,7,8,9],[9,8,7,6],[5,4,3,2]];
+var y_axis=[[1],[1],[0],[0]];
+
+var util = new gen.Utilities();
+var topology=[x_axis[0].length,y_axis[0].length];
+var activations = [util.LEAKY_RELU(),util.SIGMOID()];
+var param={
+    "learning_rate":0.1
+};
+let net=new gen.Network(topology,activations,param,null);
+util.train(net,x_axis,y_axis,200);
+util.save_model(net,"test.json");
+var result=util.predict(net,[4,5,6,7]);
+var result2=util.predict(net,[9,8,7,6]);
+console.log(result);
+console.log(result2);
+```
+
 ## Features  :
 1) ### K fold cross validation tests  
 (used to evaluate machine learning models on a limited data sample) :  
