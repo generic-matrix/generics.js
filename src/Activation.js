@@ -1,10 +1,10 @@
 
 
 function check_obj(obj){
-	if(obj==undefined){
+	if(obj===undefined){
 		return false;
 	}else{
-		if(obj.custom_adapter!=null){ return true;}else{return false;}
+		if(obj.acc!=null){ return true;}else{return false;}
 	}
 }
 
@@ -12,9 +12,10 @@ function check_obj(obj){
 * A class to define the activation functions.
 */
 class Activations{
-	constructor(){
+	constructor(acc,util){
         //optimize in next update..
-		this.optimize=null;
+		this.acc=acc;
+		this.util=util;
 	}
     /**
     * Performs sigmoid 
@@ -24,11 +25,10 @@ class Activations{
 	sigmoid(x)
 		{
 			if(check_obj(this)){
-			var number= this.custom_adapter.exp(-x*1.000);
-			var num=this.custom_adapter.add(1,number);
-			return 1 / num;
+				var denominator=this.util.add(this.acc.one_arr,this.util.exp(this.util.linear_mul(x,this.acc.minus_one_arr)));
+				return this.util.linear_div(this.acc.one_arr,denominator);
 			}else{
-			return 1 / (1 + Math.exp(-x * 1.0));
+				return 1 / (1 + Math.exp(x * -1.0));
 			}
 		}
     
@@ -41,7 +41,7 @@ class Activations{
 		dsigmoid(x)
 		{
 			if(check_obj(this)){
-			var num=this.custom_adapter.multiply(x,(1.000 - x));
+			var num=this.util.linear_mul(x,this.util.sub(this.acc.one_arr,x));
 			return num;
 			}else{
 			return x*(1.00-x);
@@ -56,7 +56,11 @@ class Activations{
 		
 		relu(x)
 		{
-			return Math.max(0,x);
+			if(check_obj(this)) {
+				return this.util.linear_max(this.acc.zero_arr,x);
+			}else{
+				return Math.max(0, x);
+			}
 		}
     
     /**
@@ -67,7 +71,20 @@ class Activations{
 
 		drelu(x)
 		{
-			if(x>0){return x;}else{return (0.1*x);}
+			if(check_obj(this)) {
+				if(this.util.linear_max_boolean(x,this.acc.zero_arr)===0){
+					return x;
+				}else{
+					return this.util.linear_mul(this.acc.zero_one,x);
+				}
+
+			}else {
+				if (x > 0) {
+					return x;
+				} else {
+					return (0.1 * x);
+				}
+			}
 		}
 		
         /**
@@ -77,16 +94,20 @@ class Activations{
     */
 		leaky_relu(x)
 		{
-			if(x<0){
-				var num=-1;
-				if(check_obj(this)){
-				num=this.custom_adapter.multiply(0.01,x);
-				}else{
-				num=0.01*x;	
+			if(check_obj(this)) {
+				let zero_arr=this.acc.zero_arr;
+				if (this.util.linear_max_boolean(x,zero_arr)) {
+					return this.util.linear_mul(this.acc.zero_zero_one,x);
+				} else {
+					return x;
 				}
-				return num;
 			}else{
-				return x; 
+				if (x < 0) {
+					var num = 0.01 * x;
+					return num;
+				} else {
+					return x;
+				}
 			}
 		}
 
@@ -97,10 +118,19 @@ class Activations{
     */
 		d_leaky_relu(x)
 		{
-			if(x<0){
-				return 0.01;
-			}else{
-				return 1; 
+			if(check_obj(this)) {
+				let zero_arr=this.acc.zero_arr;
+				if (this.util.linear_max_boolean(x,zero_arr)===1) {
+					return this.acc.zero_zero_one;
+				} else {
+					return this.acc.one_arr;
+				}
+			}else {
+				if (x < 0) {
+					return 0.01;
+				} else {
+					return 1;
+				}
 			}
 		}
 }
