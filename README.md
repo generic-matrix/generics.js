@@ -37,7 +37,7 @@ var activations = [util.LEAKY_RELU(),util.SIGMOID()];
 var param={
     "learning_rate":0.1
 };
-let net=new gen.Network(topology,activations,param,null);
+let net=new gen.Network(topology,activations,param,null,null);
 util.train(net,x_axis,y_axis,200);
 util.save_model(net,"test.json");
 var result=util.predict(net,[4,5,6,7]);
@@ -50,8 +50,8 @@ console.log(result2);
 1) ### K fold cross validation tests  
 (used to evaluate machine learning models on a limited data sample) :  
 ```
-var dir = "/content/my_model.json";
-var summary_url = "/content/summary.json";
+var dir = "my_model.json";
+var summary_url = "summary.json";
 var util = new gen.Utilities();
 var training_count = 10;
 var batch_size = 10;
@@ -79,7 +79,7 @@ util.perform_k_fold(net, x_axis, y_axis, batch_size, training_count, dir, testin
 ```
 var net = null;
 var util = new gen.Utilities();
-var dir2 = "/content/my_model.json";
+var dir2 = "my_model.json";
 util.restore_model(dir2).then(function(net2){
      net=net2;
 });
@@ -87,6 +87,7 @@ util.restore_model(dir2).then(function(net2){
 ```
 3) ### Inbuild CSV parsing :
 Refer: https://www.trygistify.com/generics#preprocessingparse_csv
+Food rating prediction: [Google Colab](https://colab.research.google.com/drive/1Kn6UHHkU_uxU10QY4efMSnIetWrc_AuS)
 ```
 var pre=new gen.Pre_Processing();
 var fill_type = 0;
