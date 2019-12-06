@@ -1,6 +1,6 @@
 /**
  * generics.js
- * https://trygistify.com/generics
+ * https://www.trygistify.com/generics
  *
  * A minimal Deep learning library for the web.
  *
