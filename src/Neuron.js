@@ -4,19 +4,24 @@ function check_obj(obj){
 	if(obj==undefined){
 		return false;
 	}else{
-		if(obj.custom_adapter!=null){ return true;}else{return false;}
+		if(obj.acc!=null){ return true;}else{return false;}
 	}
 }
 
 class Connection{
 
-	constructor(connectedNeuron,param,optimize)
+	constructor(connectedNeuron,acc,util)
 	{
 		this.connectedNeuron = connectedNeuron;
-		this.weight = 0.0;
-		this.dWeight = 0.0;
-		this.optimize=optimize;
-		this.param=param;
+		if(acc==null) {
+			this.weight = 0.0;
+			this.dWeight = 0.0;
+		}else{
+			this.weight=acc.zero_arr;
+			this.dWeight=acc.zero_arr;
+		}
+		this.acc=acc;
+		this.util=util;
 	}
 }
 
@@ -29,20 +34,29 @@ class Connection{
 */
 class Neuron{
 
-	constructor(layer,activation,param){
+	constructor(layer,activation,param,acc,util){
         //optimize in next update..
 		this.dendrons = [];
-		this.eta = 0.001;
-		this.alpha = 0.01;
-		this.error = 0.0;
-		this.gradient = 0.0;
-		this.output = 0.0;
-		this.optimize=null;
+		if(acc==null) {
+			this.eta = 0.001;
+			this.alpha = 0.01;
+			this.error = 0.0;
+			this.gradient = 0.0;
+			this.output = 0.0;
+		}else{
+			this.eta =      acc.zero_zero_zero_one;
+			this.alpha =    acc.zero_zero_one;
+			this.error =    acc.zero_arr;
+			this.gradient = acc.zero_arr;
+			this.output =   acc.zero_arr;
+		}
+		this.acc=acc;
+		this.util=util;
 		this.activation=activation;
 		this.param=param;
 		if (layer != null) {
 			layer.forEach(function(neuron) {
-				var con=new Connection(neuron,this.optimize);
+				var con=new Connection(neuron,neuron.acc,neuron.util);
 				this.dendrons.push(con);
 			},this);
 		}
@@ -53,8 +67,9 @@ class Neuron{
     */
 	addError(err)
 	{
-		if(check_obj(this)==true){
-			this.error = this.custom_adapter.add(this.error,err);
+
+		if(check_obj(this)){
+			this.error = this.util.add(this.error,err);
 		}else{
 			this.error = this.error+err;
 		}
@@ -95,21 +110,27 @@ class Neuron{
     
 	feedForward()
 	{
-		var sumoutput = 0;
+
+		var sumoutput;
+		if(!check_obj(this)) {
+			sumoutput = 0;
+		}else {
+			sumoutput = this.acc.zero_arr;
+		}
 		if (this.dendrons.length == 0) {
 			return;
 		}
-
+		var use_gpu=check_obj(this);
 		this.dendrons.forEach(function(dendron) {
-			if(check_obj(this)==true){
-				var val=this.custom_adapter.multiply(dendron.connectedNeuron.getOutput(),dendron.weight);
-				sumoutput =  Adapter.add(sumoutput,val);
+			if(use_gpu){
+				var val=dendron.util.linear_mul(dendron.connectedNeuron.getOutput(),dendron.weight);
+				sumoutput = dendron.util.add(sumoutput,val);
 			}else{
 				var val=dendron.connectedNeuron.getOutput()*dendron.weight;
 				sumoutput = sumoutput+val;
 			}
 		});
-		var activation=new Activations(this.optimize);
+		var activation=new Activations(this.acc,this.util);
 		if(this.activation=="sigmoid"){
 			this.output = activation.sigmoid(sumoutput);
 		}else if(this.activation=="relu"){
@@ -125,7 +146,17 @@ class Neuron{
     */
 	assign_weights(arr){
 		var ctr=0;
-		this.dendrons.forEach(function(dendron) { dendron.weight=arr[ctr]; ctr++; });
+		if(!check_obj(this)) {
+			this.dendrons.forEach(function (dendron) {
+				dendron.weight = arr[ctr];
+				ctr++;
+			});
+		}else{
+			this.dendrons.forEach(function (dendron) {
+				dendron.weight = this.acc.define_array(arr[ctr]);
+				ctr++;
+			});
+		}
 	}
 
     /**
@@ -134,8 +165,15 @@ class Neuron{
     */
 	get_weights(){
 		var weight=[];
-		var sumoutput = 0;
-		this.dendrons.forEach(function(dendron) { weight.push(dendron.weight); });
+		if(!check_obj(this)) {
+			this.dendrons.forEach(function (dendron) {
+				weight.push(dendron.weight);
+			});
+		}else{
+			this.dendrons.forEach(function (dendron) {
+				weight.push(dendron.acc.get_array(dendron.weight));
+			});
+		}
 		return weight;
 	}
 
@@ -145,33 +183,33 @@ class Neuron{
     
 	backPropogate()
 	{
-		var activation=new Activations(this.optimize);
+		var activation=new Activations(this.acc,this.util);
 		if(this.activation=="sigmoid"){
 			if(check_obj(this)==true){
-				this.gradient = this.custom_adapter.multiply(this.error,activation.dsigmoid(this.output));
+				this.gradient = this.util.linear_mul(this.error,activation.dsigmoid(this.output));
 			}else{
 				this.gradient = this.error*activation.dsigmoid(this.output);
 			}
 		}else if(this.activation=="relu"){
 			if(check_obj(this)==true){
-				this.gradient = this.custom_adapter.multiply(this.error,activation.drelu(this.output));
+				this.gradient = this.util.linear_mul(this.error,activation.drelu(this.output));
 			}else{
 				this.gradient = this.error*activation.drelu(this.output);
 			}
 		}else{
 			if(check_obj(this)==true){
-				this.gradient = this.custom_adapter.multiply(this.error,activation.d_leaky_relu(this.output));
+				this.gradient = this.util.linear_mul(this.error,activation.d_leaky_relu(this.output));
 			}else{
 				this.gradient = this.error*activation.d_leaky_relu(this.output);
 			}
 		}
 		this.dendrons.forEach(function(dendron) {
 			if(check_obj(this)==true){
-				dendron.dWeight = (this.custom_adapter.multiply(dendron.connectedNeuron.output,this.gradient));
-				dendron.dWeight = this.custom_adapter.multiply(this.eta,dendron.dWeight);
-				var num=this.custom_adapter.multiply(this.alpha,dendron.dWeight);
-				dendron.dWeight=this.custom_adapter.add(dendron.dWeight,num);
-				dendron.weight = this.custom_adapter.add(dendron.weight,dendron.dWeight);
+				dendron.dWeight = this.util.linear_mul(dendron.connectedNeuron.output,this.gradient);
+				dendron.dWeight = this.util.linear_mul(this.eta,dendron.dWeight);
+				var num=this.util.linear_mul(this.alpha,dendron.dWeight);
+				dendron.dWeight=this.util.add(dendron.dWeight,num);
+				dendron.weight = this.util.add(dendron.weight,dendron.dWeight);
 			}else{
 				dendron.dWeight = dendron.connectedNeuron.output*this.gradient;
 				dendron.dWeight = this.eta*dendron.dWeight;
@@ -180,16 +218,33 @@ class Neuron{
 				dendron.weight = dendron.weight+dendron.dWeight;
 			}
 			if(this.param!=null){
-				if(this.param["learning_rate"]!=undefined){
-					dendron.connectedNeuron.addError((dendron.weight - this.param["learning_rate"] ) *  this.gradient);
+				if(this.param["learning_rate"]!==undefined){
+					if(check_obj(this)){
+						var result=dendron.util.sub(dendron.weight,dendron.util.linear_mul(this.param["learning_rate"],this.gradient));
+						dendron.connectedNeuron.addError(result);
+					}else {
+						dendron.connectedNeuron.addError((dendron.weight - this.param["learning_rate"]) * this.gradient);
+					}
 				}else{
-					dendron.connectedNeuron.addError(dendron.weight *  this.gradient);
+					if(check_obj(this)) {
+						dendron.connectedNeuron.addError(dendron.util.linear_mul(dendron.weight,this.gradient));
+					}else {
+						dendron.connectedNeuron.addError(dendron.weight * this.gradient);
+					}
 				}
 			}else{
-				dendron.connectedNeuron.addError(dendron.weight *  this.gradient);
+				if(check_obj(this)) {
+					dendron.connectedNeuron.addError(dendron.util.linear_mul(dendron.weight,this.gradient));
+				}else {
+					dendron.connectedNeuron.addError(dendron.weight * this.gradient);
+				}
 			}
 		},this);
-		this.error = 0;
+		if(check_obj(this)) {
+			this.error = this.acc.zero_arr;
+		}else{
+			this.error = 0;
+		}
 	}
 
 
