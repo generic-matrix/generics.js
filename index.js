@@ -4,7 +4,7 @@
  *
  * A minimal Deep learning library for the web.
  *
- * @version 0.1.0
+ * @version 0.1.3
  * @date Tue Dec 03 2019 12:00:00 GMT-0500 (Eastern Standard Time)
  *
  * @license MIT
