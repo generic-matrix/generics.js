@@ -23,9 +23,9 @@ class Network{
 				this.param["learning_rate"] = this.acc.define_array([this.param["learning_rate"]]);
 			}
 		}else{
-			console.error("-------------------------------------------------------------------------------------------------");
-			console.error("| You can install accelerator.js by [ npm install accelerator.js -g --save ] to leverage the GPU|");
-			console.error("-------------------------------------------------------------------------------------------------");
+			console.info("-------------------------------------------------------------------------------------------------");
+			console.info("| You can install accelerator.js by [ npm install accelerator.js -g --save ] to leverage the GPU|");
+			console.info("-------------------------------------------------------------------------------------------------");
 			this.acc = null;
 			this.acc_util = null;
 		}
@@ -49,10 +49,14 @@ class Network{
 	}
 	setInput(inputs)
 	{
-		for (var i = 0;i< inputs.length;i++) {
-			if(this.acc!=null) {
-				this.layers[0][i].setOutput(this.acc.define_array([inputs[i]]));
-			}else{
+		if(this.acc!=null) {
+			var data = this.acc.define_array(inputs);
+			var t_arr = this.acc.get_tensors(data[data.var_name]);
+			for (var i = 0;i< t_arr.length;i++) {
+				this.layers[0][i].setOutput(this.acc.copy_obj(t_arr[i]));
+			}
+		}else{
+			for (var i = 0;i< inputs.length;i++) {
 				this.layers[0][i].setOutput(inputs[i]);
 			}
 		}
@@ -83,14 +87,23 @@ class Network{
     */
 	backPropogate(target)
 	{
-		for (var i = 0; i < target.length; i++) {
-			if(this.acc!=null){
-				var temp=this.layers[this.layers.length - 1][i].getOutput();
-				var res = this.acc_util.sub(this.acc.define_array([target[i]]),temp);
-				this.layers[this.layers.length - 1][i].setError(res);
+		if(this.acc!=null){
+			var data=this.acc.define_array(target);
+			if(target.length!=1) {
+				data = this.acc.get_tensors(data[data.var_name]);
 			}else{
-				var res = target[i]-this.layers[this.layers.length - 1][i].getOutput();
-				this.layers[this.layers.length - 1][i].setError(res);
+				data=[data];
+;			}
+			for (var i = 0; i < data.length; i++) {
+				var temp = this.layers[this.layers.length - 1][i].getOutput();
+				var result = this.acc_util.sub(this.acc.copy_obj(data[i]),temp);
+				this.layers[this.layers.length - 1][i].setError(result);
+			}
+		}else {
+			for (var i = 0; i < target.length; i++) {
+				var result = target[i] - this.layers[this.layers.length - 1][i].getOutput();
+				this.layers[this.layers.length - 1][i].setError(result);
+
 			}
 		}
 		this.layers.reverse().forEach(function(layer) {
