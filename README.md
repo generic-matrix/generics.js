@@ -108,11 +108,9 @@ util.perform_k_fold(net, x_axis, y_axis, batch_size, training_count, dir, testin
 2) ### Easy retriving of model  :  
 
 ```
-var net = null;
-var util = new gen.Utilities();
-var dir2 = "my_model.json";
-util.restore_model(dir2).then(function(net2){
-     net=net2;
+var model_dir = "my_model.json";
+util.restore_model(model_dir).then(function(net2){
+     console.log(net2);
 });
 
 ```
