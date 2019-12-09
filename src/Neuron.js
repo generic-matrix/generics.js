@@ -91,7 +91,11 @@ class Neuron{
     
 	setOutput(output)
 	{
-		this.output = output;
+		if(this.acc!=null){
+			this.output=this.util.transpose(output);
+		}else {
+			this.output = output;
+		}
 	}
 
     /**
@@ -153,7 +157,7 @@ class Neuron{
 			});
 		}else{
 			this.dendrons.forEach(function (dendron) {
-				dendron.weight = this.acc.define_array(arr[ctr]);
+				dendron.weight = dendron.acc.define_array(arr[ctr]);
 				ctr++;
 			});
 		}
