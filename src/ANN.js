@@ -50,10 +50,11 @@ class Network{
 	setInput(inputs)
 	{
 		if(this.acc!=null) {
-			var data = this.acc.define_array(inputs);
-			var t_arr = this.acc.get_tensors(data[data.var_name]);
-			for (var i = 0;i< t_arr.length;i++) {
-				this.layers[0][i].setOutput(this.acc.copy_obj(t_arr[i]));
+			for (var i = 0;i< inputs.length;i++) {
+				if(inputs[i].obj.shape.length!==0){
+					throw new Error("Invalid input error types . Example of input types supported are : let x_axis=[[1,2,3,4],[6,7,8,9],[9,8,7,6],[5,4,3,2]];");
+				}
+				this.layers[0][i].setOutput(inputs[i]);
 			}
 		}else{
 			for (var i = 0;i< inputs.length;i++) {
@@ -88,15 +89,9 @@ class Network{
 	backPropogate(target)
 	{
 		if(this.acc!=null){
-			var data=this.acc.define_array(target);
-			if(target.length!=1) {
-				data = this.acc.get_tensors(data[data.var_name]);
-			}else{
-				data=[data];
-;			}
-			for (var i = 0; i < data.length; i++) {
+			for (var i = 0; i < target.length; i++) {
 				var temp = this.layers[this.layers.length - 1][i].getOutput();
-				var result = this.acc_util.sub(this.acc.copy_obj(data[i]),temp);
+				var result = this.acc_util.sub(target[i],temp);
 				this.layers[this.layers.length - 1][i].setError(result);
 			}
 		}else {
@@ -125,7 +120,7 @@ class Network{
 		var err = 0;
 		for (var i = 0; i < target.length; i++) {
 			if(this.acc!=null){
-				var e=this.acc_util.sub(this.acc.define_array([target[i]]),this.layers[this.layers.length - 1][i].getOutput());
+				var e=this.acc_util.sub(target[i],this.layers[this.layers.length - 1][i].getOutput());
 				var pow=this.acc_util.pow(e,this.acc.two_arr);
 				err=this.acc.get_array(pow)[0]+err;
 			}
@@ -147,7 +142,11 @@ class Network{
 		this.layers.forEach(function(layer){
 			var j=0;
 			layer.forEach(function(neuron){
-				neuron.assign_weights(json[i][j]);
+				if(neuron.acc!=null) {
+					neuron.assign_weights(json[i][j]);
+				}else{
+					neuron.assign_weights(json[i][j]);
+				}
 				j++;
 			});
 			i++;
