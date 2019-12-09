@@ -112,7 +112,6 @@ var model_dir = "my_model.json";
 util.restore_model(model_dir).then(function(net2){
      console.log(net2);
 });
-
 ```
 3) ### Inbuild CSV parsing :
 Refer: https://www.trygistify.com/generics#preprocessingparse_csv
