@@ -58,6 +58,8 @@ var settings=
     };
 ```
 ```
+var util = new gen.Utilities(Accelerator,settings);
+
 var x_axis=[[1,2,3,4],[6,7,8,9],[9,8,7,6],[5,4,3,2]];
 var y_axis=[[1],[1],[0],[0]];
 
@@ -68,7 +70,6 @@ var param={
 };
 
 var net=new gen.Network(topology,activations,param,Accelerator,settings);
-var util = new gen.Utilities(Accelerator,settings);
 
 util.train(net,x_axis,y_axis,1000);
 util.save_model(net,"test.json");
