@@ -34,6 +34,17 @@ function shuffleArray(array1,array2) {
 */
 class Utilities{
 
+	constructor(Accelerator=null,settings=null) {
+		if(Accelerator!=null){
+			this.Accelerator=Accelerator;
+			this.settings=settings;
+			this.acc = new Accelerator.accelerator(settings);
+			this.acc_util = new Accelerator.util(settings);
+		}else{
+			this.acc = null;
+			this.acc_util = null;
+		}
+	}
 	SIGMOID() { return "sigmoid"; }
 	RELU() { return "relu"; }
 	LEAKY_RELU() { return "leaky_relu"; }
@@ -47,7 +58,15 @@ class Utilities{
 		var json={};
 		json.topology=net.topology;
 		json.activations=net.activations;
-		json.param=net.param;
+		if(this.acc!=null){
+			var param=net.param;
+			if(typeof(param.learning_rate)!="number") {
+				param.learning_rate = this.acc.get_array(param.learning_rate)[0];
+			}
+			json.param = param;
+		}else {
+			json.param = net.param;
+		}
 		var weight = [];
 		net.layers.forEach(function(layer){
 			var lay=[];
@@ -66,6 +85,13 @@ class Utilities{
 		}
 	}
 
+	convert_to_tensors(arr){
+		var array=[];
+		for(var i=0;i<arr.length;i++) {
+			array.push(this.acc.define_array(arr[i]));
+		}
+		return array;
+	}
     /**
     * To train a neural network - Takes the entire batch size
     * @param {Network}  net
@@ -74,19 +100,44 @@ class Utilities{
     * @param {string}  count:  The count value.
     */
 	train(net,inputs,output,count){
-		for(var j=0;j<count;j++){
-			var erro = 0.0;
-			for (var i = 0; i < inputs.length ; i++) {
-				net.setInput(inputs[i]);
-				net.feedForward();
-				net.backPropogate(output[i]);
-				erro = erro + net.getError(output[i]);
+		if(this.acc!=null) {
+			//recusively convert into tensors..
+			var input_arr=[];
+			var output_arr=[];
+			for(var i=0;i<inputs.length;i++){
+				input_arr.push(this.convert_to_tensors(inputs[i]));
+				output_arr.push(this.convert_to_tensors(output[i]));
 			}
-			try{
-				process.stdout.cursorTo(0);
-				process.stdout.write("Error: "+erro);
-			}catch(err){
-				console.log("Error: "+erro);
+			for (var j = 0; j < count; j++) {
+				var erro = 0;
+				for (var i = 0; i < input_arr.length; i++) {
+					net.setInput(input_arr[i]);
+					net.feedForward();
+					net.backPropogate(output_arr[i]);
+					erro = erro + net.getError(output_arr[i]);
+				}
+				try {
+					process.stdout.cursorTo(0);
+					process.stdout.write("Error: " + erro);
+				}catch(err) {
+					console.log("Error: " + erro);
+				}
+			}
+		}else {
+			for (var j = 0; j < count; j++) {
+				var erro = 0.0;
+				for (var i = 0; i < inputs.length; i++) {
+					net.setInput(inputs[i]);
+					net.feedForward();
+					net.backPropogate(output[i]);
+					erro = erro + net.getError(output[i]);
+				}
+				try {
+					process.stdout.cursorTo(0);
+					process.stdout.write("Error: " + erro);
+				} catch (err) {
+					console.log("Error: " + erro);
+				}
 			}
 		}
 
@@ -99,10 +150,16 @@ class Utilities{
     * @param {input_array}  input_array: The x axis of the data set.
     * @returns {array}  result:  The result predicted by the network.
     */
-	predict(net,input_arr){
-		net.setInput(input_arr);
-		net.feedForward();
-		return net.getTheResults();
+	predict(net,input){
+		if(this.acc!=null) {
+			net.setInput(this.convert_to_tensors(input));
+			net.feedForward();
+			return net.getTheResults();
+		}else {
+			net.setInput(input);
+			net.feedForward();
+			return net.getTheResults();
+		}
 	}
 
     /**
@@ -112,7 +169,7 @@ class Utilities{
     
 	restore_model(dir){
         //,use_gpu --> int he next update.
-        var usr_gpu=null;
+        var obj=this;
 		return new Promise(function(resolve, reject) {
 			fs.readFile(dir, function read(err, data) {
 				if (err) {
@@ -134,7 +191,11 @@ class Utilities{
 				});
 				var weights=json["weights"];
 				var param=json["param"];
-				var net=new Network(topology,activations,param);
+				if(obj.acc!=null){
+					var net = new Network(topology, activations, param,obj.Accelerator,obj.settings);
+				}else {
+					var net = new Network(topology, activations, param);
+				}
 				net.assign_weights(weights);
 				resolve(net);
 			});
@@ -148,28 +209,51 @@ class Utilities{
     * @param {array}  y_test_axis : The y_axis is the output the model is intended to do.
     * @param {JSON}  json : The JSON must contain the keys "g_x_plots" , "e_x_plots" and "y_plots" all array paramas.
     * @param {number}  step : A numerical value 
-    * @param {number}  threashold : The threashold value ,if the predicted value is less  than it then success else it's counted as failue.
+    * @param {number}  threashold : The threashold value ,if the predicted value is less  than it then success else it's counted as failure.
     */
     
 	test(net,x_test_axis,y_test_axis,json,step,threashold){
 		var ctr=0;
 		var success=0;
 		var failure=0;
+		var obj=this;
+		if(obj.acc!=null){
+			var acc_t=obj.acc.define_array(threashold);
+		}
 		x_test_axis.forEach(function(input_arr){
-			net.setInput(input_arr);
-			net.feedForward();
-			var val1=Math.abs(net.getTheResults()[0]);
-			var val2=Math.abs(y_test_axis[ctr][0]);
-			json.g_x_plots.push(val1);
-			json.e_x_plots.push(val2);
-			json.y_plots.push(step+ctr);
-			var dif=Math.abs(val2-val1);
-			if(Math.abs(dif)>threashold){
-				failure++;
+			if(obj.acc!=null){
+				net.setInput(obj.acc.define_array(input_arr));
 			}else{
-				success++;
+				net.setInput(input_arr);
 			}
-			console.log("Given: "+val1+" Expected: "+(val2)+" Difference: "+dif);
+			net.feedForward();
+			if(obj.acc!=null) {
+				var val1 = obj.acc_util.abs(obj.acc.define_array(net.getTheResults()));
+				var val2 = obj.acc_util.abs(obj.acc.define_array(y_test_axis[ctr]));
+				json.g_x_plots.push(val1);
+				json.e_x_plots.push(val2);
+				json.y_plots.push(step + ctr);
+				var dif = obj.acc_util.abs(obj.acc_util.sub(val1,val2));
+				if (obj.acc_util.linear_max_boolean( obj.acc_util.abs(dif),acc_t)) {
+					failure++;
+				} else {
+					success++;
+				}
+				console.log("\n Given: "+obj.acc.get_array(val1).toString()+" \n Expected: "+obj.acc.get_array(val2).toString()+"\n");
+			}else {
+				var val1 = Math.abs(net.getTheResults()[0]);
+				var val2 = Math.abs(y_test_axis[ctr][0]);
+				json.g_x_plots.push(val1);
+				json.e_x_plots.push(val2);
+				json.y_plots.push(step + ctr);
+				var dif = Math.abs(val2 - val1);
+				if (Math.abs(dif) > threashold) {
+					failure++;
+				} else {
+					success++;
+				}
+				console.log("Given: "+val1+" Expected: "+(val2)+" Difference: "+dif);
+			}
 			ctr++;
 		});
 
@@ -190,7 +274,7 @@ class Utilities{
     */
     
 	perform_k_fold(net,input,output,folds,count,dir,threashold,percent){
-
+		var obj=this;
 		return new Promise(function(resolve, reject) {
 			if(input.length!=output.length){
 				reject("The x axis and the y axis length is not same");
@@ -219,10 +303,9 @@ class Utilities{
 					var y_train=y_data_set[j];
 					var x_test=x_train.splice(0,index);
 					var y_test=y_train.splice(0,index);
-					var util=new Utilities();
-					util.train(net,x_train,y_train,count);
-					util.test(net,x_test,y_test,json,j,threashold);
-					util.save_model(net,dir);
+					obj.train(net,x_train,y_train,count);
+					obj.test(net,x_test,y_test,json,j,threashold);
+					obj.save_model(net,dir);
 				}
 
 			}
