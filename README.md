@@ -61,13 +61,15 @@ var settings=
 var x_axis=[[1,2,3,4],[6,7,8,9],[9,8,7,6],[5,4,3,2]];
 var y_axis=[[1],[1],[0],[0]];
 
-var util = new gen.Utilities(Accelerator,settings);
 var topology=[x_axis[0].length,y_axis[0].length];
 var activations = [util.SIGMOID(),util.SIGMOID()];
 var param={
     "learning_rate":0.1
 };
+
 var net=new gen.Network(topology,activations,param,Accelerator,settings);
+var util = new gen.Utilities(Accelerator,settings);
+
 util.train(net,x_axis,y_axis,1000);
 util.save_model(net,"test.json");
 var result=util.predict(net,[4,5,6,7]);
