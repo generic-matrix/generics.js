@@ -27,7 +27,7 @@ cd generics.js && npm install -g --save
 ```
 let gen = require("generics.js");
 ```
-# CPU Example:
+### CPU Example:
 ```
 var x_axis=[[1,2,3,4],[6,7,8,9],[9,8,7,6],[5,4,3,2]];
 var y_axis=[[1],[1],[0],[0]];
@@ -46,8 +46,8 @@ var result2=util.predict(net,[9,8,7,6]);
 console.log("Expect 1 Given : "+result);
 console.log("Expect 0 Given : "+result2);
 ```
-# GPU Example:
-pull accelerator.js by :
+### GPU Example:
+Pull accelerator.js by :
 `npm install accelerator.js -g --save`
 ```
 let gen = require("generics.js");
