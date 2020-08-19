@@ -5,9 +5,6 @@
 
 The library allows to leverage to create and deploy real time deep learning solution currently including ANN and CNN with fully featured reinforcement learning and k-fold cross validation tests.
 
-## API Docs :
-www.trygistify.com/generics
-
 ## Real time examples:
 Food rating prediction: [Google Colab](https://colab.research.google.com/drive/1Kn6UHHkU_uxU10QY4efMSnIetWrc_AuS)
 
